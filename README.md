@@ -36,6 +36,7 @@ codex -p "$(cat skills/ios-store-assets/SKILL.md)"
 |---|---|
 | [`ios-store-assets`](./skills/ios-store-assets/SKILL.md) | 为 iOS 项目批量生成 App Store 上架资源（App Icon / 商店截图 / Preview Poster），通过 codex CLI 调用 gpt-image-2 出图。 |
 | [`skill-creator`](./skills/skill-creator/SKILL.md) | 在 SharkerSkills plugin 内交互式创建新 skill —— 8 轮问答 → 生成 SKILL.md → 自动 minor-bump 三站点版本与更新 README 目录。 |
+| [`picgo-upload`](./skills/picgo-upload/SKILL.md) | 把本地图片通过 PicGo 桌面端上传到图床并返回 URL；内置 bash 脚本随 plugin 分发，无需全局安装。 |
 
 ## 添加新 skill
 

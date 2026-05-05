@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+#
+# picgo-agent — minimal CLI wrapper around PicGo desktop's local upload API.
+#
+# Contract:
+#   picgo-agent upload <path>
+#     success: stdout = URL + "\n", exit 0
+#     failure: stdout = empty (zero bytes), stderr = reason, exit != 0
+#
+# Notes for maintainers:
+#   - We use `set -uo pipefail`, NOT `set -e`. We rely on explicit
+#     return-code handling because some idioms (e.g. `[ -e "$p" ] || { ...; return 1; }`)
+#     do not compose well with `set -e`. Every command must check `$?`
+#     or be guarded with `||`. `pipefail` alone does not protect unchecked
+#     pipelines; future maintainers must keep this convention.
+#   - bash 3.2 compatibility is required (macOS default). Avoid
+#     `mapfile`, `${var,,}`, associative arrays, `[[ =~ ]]` differences.
+#   - Stdout is reserved for the resulting URL on success. All other
+#     output goes to stderr.
+
+set -uo pipefail
+
+PICGO_URL_DEFAULT='http://127.0.0.1:36677/upload'
+
+main() {
+  case "${1:-}" in
+    upload)            shift; cmd_upload "$@"; return $? ;;
+    -h|--help|help)    usage_stdout; return 0 ;;
+    "")                usage_stderr; return 2 ;;
+    *)                 err "unknown command: $1"; usage_stderr; return 2 ;;
+  esac
+}
+
+cmd_upload() {
+  local path abs body resp_body resp_err curl_exit url msg http_code body_only err_tmp
+
+  path="${1:-}"
+  if [ -z "$path" ]; then
+    err "upload: missing <path>"
+    return 2
+  fi
+
+  # Reject paths with JSON-hostile or control bytes (AC11b).
+  case "$path" in
+    *[\"\\]*)
+      err "upload: path contains unsupported character (\" or \\)"
+      return 1
+      ;;
+  esac
+  if printf '%s' "$path" | LC_ALL=C grep -q '[[:cntrl:]]'; then
+    err "upload: path contains unsupported control character"
+    return 1
+  fi
+
+  if [ ! -e "$path" ]; then
+    err "upload: file not found: $path"
+    return 1
+  fi
+  if [ ! -r "$path" ]; then
+    err "upload: cannot read file: $path"
+    return 1
+  fi
+
+  abs=$(resolve_abs "$path") || { err "upload: cannot resolve path: $path"; return 1; }
+
+  body=$(printf '{"list":["%s"]}' "$abs")
+
+  err_tmp=$(mktemp "${TMPDIR:-/tmp}/picgo-agent.err.XXXXXX") \
+    || { err "upload: cannot create temp file"; return 1; }
+
+  resp_body=$(curl -sS -m 30 \
+                  -H 'Content-Type: application/json' \
+                  -X POST -d "$body" \
+                  -o - -w '\n__HTTP__:%{http_code}' \
+                  "${PICGO_URL:-$PICGO_URL_DEFAULT}" 2>"$err_tmp")
+  curl_exit=$?
+  resp_err=$(cat "$err_tmp" 2>/dev/null || true)
+  rm -f "$err_tmp"
+
+  if [ $curl_exit -ne 0 ]; then
+    case $curl_exit in
+      7)
+        err "PicGo desktop is not running on 127.0.0.1:36677 (start PicGo and enable Server)"
+        ;;
+      28)
+        err "request timeout after 30s — PicGo did not respond"
+        ;;
+      *)
+        local flat
+        flat=$(printf '%s' "$resp_err" | tr '\n' ' ')
+        err "request failed (curl $curl_exit): $flat"
+        ;;
+    esac
+    return 1
+  fi
+
+  http_code="${resp_body##*__HTTP__:}"
+  body_only="${resp_body%$'\n'__HTTP__:*}"
+
+  if printf '%s' "$body_only" | grep -qE '"success"[[:space:]]*:[[:space:]]*true'; then
+    url=$(extract_url "$body_only")
+    if [ -n "$url" ]; then
+      printf '%s\n' "$url"
+      return 0
+    fi
+    err "upload reported success but no URL in response"
+    return 1
+  fi
+
+  msg=$(printf '%s' "$body_only" | sed -n 's/.*"message"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
+  err "upload failed: ${msg:-unknown error (HTTP ${http_code:-?})}"
+  return 1
+}
+
+extract_url() {
+  local body="$1" url=""
+  if [ "${PICGO_USE_JQ:-0}" = "1" ] && command -v jq >/dev/null 2>&1; then
+    url=$(printf '%s' "$body" | jq -r '.result[0] // ""' 2>/dev/null)
+    [ -n "${url:-}" ] || url=""
+  else
+    url=$(printf '%s' "$body" | sed -n 's/.*"result"[[:space:]]*:[[:space:]]*\[[[:space:]]*"\([^"]*\)".*/\1/p')
+  fi
+  printf '%s' "$url"
+}
+
+resolve_abs() {
+  local p="$1" d b
+  case "$p" in
+    /*)
+      printf '%s\n' "$p"
+      ;;
+    *)
+      d=$(cd "$(dirname "$p")" 2>/dev/null && pwd -P) || return 1
+      b=$(basename "$p")
+      printf '%s/%s\n' "$d" "$b"
+      ;;
+  esac
+}
+
+err() {
+  printf '%s\n' "$*" >&2
+}
+
+usage_stderr() {
+  printf 'usage: picgo-agent upload <path>\n' >&2
+}
+
+usage_stdout() {
+  printf 'usage: picgo-agent upload <path>\n'
+  printf '\n'
+  printf 'env:\n'
+  printf '  PICGO_URL       override upload endpoint (default: %s)\n' "$PICGO_URL_DEFAULT"
+  printf '  PICGO_USE_JQ=1  use jq for response parsing if available\n'
+}
+
+main "$@"
+exit $?
