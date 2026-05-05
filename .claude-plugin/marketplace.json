@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/schemas/marketplace.json",
+  "name": "sharker-skills",
+  "description": "Sharker's curated personal Claude Code skill collection.",
+  "owner": {
+    "name": "Sharker",
+    "email": "aaksharker@gmail.com"
+  },
+  "version": "0.1.0",
+  "plugins": [
+    {
+      "name": "sharker-skills",
+      "description": "A growing collection of focused, reusable Claude Code skills curated by Sharker. Seeded with ios-store-assets.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Sharker",
+        "email": "aaksharker@gmail.com"
+      },
+      "source": "./",
+      "category": "productivity",
+      "homepage": "https://github.com/Sharker/SharkerSkills",
+      "tags": ["skills", "ios", "app-store", "assets", "personal-collection"]
+    }
+  ]
+}
