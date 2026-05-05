@@ -1,0 +1,73 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1777986761269,
+  "projectRoot": "/Users/sharker/Desktop/Project/Person/AI/Tool/SharkerSkills",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "skills": {
+      "path": "skills",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1777986761172,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "README.md",
+      "accessCount": 6,
+      "lastAccessed": 1777987957856,
+      "type": "file"
+    },
+    {
+      "path": "skills/ios-store-assets/SKILL.md",
+      "accessCount": 3,
+      "lastAccessed": 1777987669115,
+      "type": "file"
+    },
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "accessCount": 3,
+      "lastAccessed": 1777987674692,
+      "type": "file"
+    },
+    {
+      "path": "skills/skill-creator/SKILL.md",
+      "accessCount": 3,
+      "lastAccessed": 1777988001977,
+      "type": "file"
+    },
+    {
+      "path": ".claude-plugin/plugin.json",
+      "accessCount": 2,
+      "lastAccessed": 1777987675079,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

@@ -2,20 +2,40 @@
 
 Sharker 个人精选的 Claude Code skills 集合 —— 一次性装齐日常顺手的工具。
 
-## Install
+## Install (Claude Code)
 
 ```
 /plugin marketplace add AkaShark/SharkerSkills
 /plugin install sharker-skills@sharker-skills
+/reload-plugins
 ```
 
-> 上述命令前提：GitHub 仓库已存在于 https://github.com/AkaShark/SharkerSkills 。仓库创建与 push 是部署步骤，独立完成。
+只执行 `marketplace add` 仅把市场注册到 `~/.claude/plugins/known_marketplaces.json`，**不会**真正启用任何 skill；必须再 `install` 一次。安装完成后 `/reload-plugins` 让本会话立即生效。
+
+### 解析逻辑
+
+- `owner/repo` 形式默认按 GitHub 解析，等价于 `https://github.com/AkaShark/SharkerSkills`
+- Claude Code 拉取仓库后读取 `.claude-plugin/marketplace.json`，按其中的 `plugins[]` 注册可安装条目
+- 也支持 `https://...git`、本地路径、`owner/repo@branch` 等源
+
+## Codex 用户怎么办
+
+**Codex CLI 不支持** Claude Code 的 plugin / marketplace / Skill 体系——`.claude-plugin/*.json`、SKILL frontmatter、hooks、agents 都是 Claude Code 专属抽象。本仓库定位是 **Claude Code 专用 skill 集合**，不为 Codex 做适配。
+
+如果你用 Codex 想复用这里的 prompt，可以手动把 `skills/<name>/SKILL.md` 的正文作为 prompt 直接喂给 `codex`：
+
+```
+codex -p "$(cat skills/ios-store-assets/SKILL.md)"
+```
+
+注意：`ios-store-assets` 内部本身就调用 `codex` CLI 来生成图片——它的 **消费者** 是 Claude Code，**执行器** 才是 Codex；两者职责不冲突。
 
 ## Skill 目录
 
 | Skill | 用途 |
 |---|---|
 | [`ios-store-assets`](./skills/ios-store-assets/SKILL.md) | 为 iOS 项目批量生成 App Store 上架资源（App Icon / 商店截图 / Preview Poster），通过 codex CLI 调用 gpt-image-2 出图。 |
+| [`skill-creator`](./skills/skill-creator/SKILL.md) | 在 SharkerSkills plugin 内交互式创建新 skill —— 8 轮问答 → 生成 SKILL.md → 自动 minor-bump 三站点版本与更新 README 目录。 |
 
 ## 添加新 skill
 
