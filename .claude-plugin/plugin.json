@@ -6,8 +6,8 @@
     "name": "Sharker",
     "email": "aaksharker@gmail.com"
   },
-  "repository": "https://github.com/Sharker/SharkerSkills",
-  "homepage": "https://github.com/Sharker/SharkerSkills",
+  "repository": "https://github.com/AkaShark/SharkerSkills",
+  "homepage": "https://github.com/AkaShark/SharkerSkills",
   "license": "MIT",
   "keywords": ["skills", "ios", "app-store", "assets", "claude-code"],
   "skills": "./skills/"
