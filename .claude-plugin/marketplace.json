@@ -1,30 +1,65 @@
 {
   "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/schemas/marketplace.json",
   "name": "sharker-skills",
-  "description": "Sharker's curated personal Claude Code skill collection.",
+  "description": "Sharker's curated personal Claude Code skill collection, organized into focused category plugins.",
   "owner": {
     "name": "Sharker",
     "email": "aaksharker@gmail.com"
   },
-  "version": "0.3.0",
+  "version": "0.4.0",
   "plugins": [
     {
-      "name": "sharker-skills",
-      "description": "A growing collection of focused, reusable Claude Code skills curated by Sharker. Seeded with ios-store-assets.",
-      "version": "0.3.0",
+      "name": "sharker-common",
+      "description": "Cross-cutting meta and utility skills. Includes skill-creator, the interactive generator for new skills in this marketplace.",
+      "version": "0.1.0",
       "author": {
         "name": "Sharker",
         "email": "aaksharker@gmail.com"
       },
-      "source": "./",
+      "source": "./plugins/common",
       "category": "productivity",
       "homepage": "https://github.com/AkaShark/SharkerSkills",
       "tags": [
         "skills",
+        "meta",
+        "generator",
+        "personal-collection"
+      ]
+    },
+    {
+      "name": "sharker-ios",
+      "description": "iOS / Apple platform skills. Includes ios-store-assets for generating App Store submission assets via the codex CLI.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Sharker",
+        "email": "aaksharker@gmail.com"
+      },
+      "source": "./plugins/ios",
+      "category": "productivity",
+      "homepage": "https://github.com/AkaShark/SharkerSkills",
+      "tags": [
         "ios",
         "app-store",
         "assets",
-        "personal-collection"
+        "xcode"
+      ]
+    },
+    {
+      "name": "sharker-tool",
+      "description": "Standalone utility tool skills. Includes picgo-upload for pushing local images to an image host and returning a URL.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Sharker",
+        "email": "aaksharker@gmail.com"
+      },
+      "source": "./plugins/tool",
+      "category": "productivity",
+      "homepage": "https://github.com/AkaShark/SharkerSkills",
+      "tags": [
+        "tools",
+        "image",
+        "upload",
+        "picgo"
       ]
     }
   ]

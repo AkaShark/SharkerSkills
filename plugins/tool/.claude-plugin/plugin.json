@@ -1,0 +1,20 @@
+{
+  "name": "sharker-tool",
+  "version": "0.1.0",
+  "description": "Standalone utility tool skills curated by Sharker. Includes picgo-upload for pushing local images to an image host and returning a URL.",
+  "author": {
+    "name": "Sharker",
+    "email": "aaksharker@gmail.com"
+  },
+  "repository": "https://github.com/AkaShark/SharkerSkills",
+  "homepage": "https://github.com/AkaShark/SharkerSkills",
+  "license": "MIT",
+  "keywords": [
+    "tools",
+    "image",
+    "upload",
+    "picgo",
+    "claude-code"
+  ],
+  "skills": "./skills/"
+}

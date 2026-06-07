@@ -1,46 +1,74 @@
 # SharkerSkills
 
-Sharker 个人精选的 Claude Code skills 集合 —— 一次性装齐日常顺手的工具。
+Sharker 个人精选的 Claude Code skills 集合 —— 按用途拆成 **3 个分类 plugin**，项目里需要哪类就装哪类。
 
 ## Install (Claude Code)
 
+先把 marketplace 注册一次，再按需安装其中的分类 plugin：
+
 ```
 /plugin marketplace add AkaShark/SharkerSkills
-/plugin install sharker-skills@sharker-skills
+/plugin install sharker-ios@sharker-skills      # iOS / App Store 资源
+/plugin install sharker-tool@sharker-skills     # 独立工具（图床上传等）
+/plugin install sharker-common@sharker-skills   # 通用 / meta（含 skill-creator）
 /reload-plugins
 ```
 
-只执行 `marketplace add` 仅把市场注册到 `~/.claude/plugins/known_marketplaces.json`，**不会**真正启用任何 skill；必须再 `install` 一次。安装完成后 `/reload-plugins` 让本会话立即生效。
+- `marketplace add` 只把市场注册到 `~/.claude/plugins/known_marketplaces.json`，**不会**真正启用任何 skill；必须再对每个想用的分类 plugin `install` 一次。
+- 各 plugin 互相独立，只装你需要的那几个即可。
+- 安装完成后 `/reload-plugins` 让本会话立即生效。
+- skill 安装后以**命名空间**形式调用：`/sharker-ios:ios-store-assets`、`/sharker-tool:picgo-upload` 等（自动触发仍按各 skill 的 `description`，不受命名空间影响）。
+
+> **从旧版本升级**：0.3.x 时全部 skill 打包在单个 `sharker-skills` plugin 里。0.4.0 起已拆分，旧的 `sharker-skills@sharker-skills` 不再存在；请改装上面三个分类 plugin id。
 
 ### 解析逻辑
 
 - `owner/repo` 形式默认按 GitHub 解析，等价于 `https://github.com/AkaShark/SharkerSkills`
-- Claude Code 拉取仓库后读取 `.claude-plugin/marketplace.json`，按其中的 `plugins[]` 注册可安装条目
+- Claude Code 拉取仓库后读取 `.claude-plugin/marketplace.json`，按其中的 `plugins[]` 注册可安装条目（本仓库声明了 3 个）
 - 也支持 `https://...git`、本地路径、`owner/repo@branch` 等源
 
 ## Codex 用户怎么办
 
 **Codex CLI 不支持** Claude Code 的 plugin / marketplace / Skill 体系——`.claude-plugin/*.json`、SKILL frontmatter、hooks、agents 都是 Claude Code 专属抽象。本仓库定位是 **Claude Code 专用 skill 集合**，不为 Codex 做适配。
 
-如果你用 Codex 想复用这里的 prompt，可以手动把 `skills/<name>/SKILL.md` 的正文作为 prompt 直接喂给 `codex`：
+如果你用 Codex 想复用这里的 prompt，可以手动把 `plugins/<plugin>/skills/<name>/SKILL.md` 的正文作为 prompt 直接喂给 `codex`：
 
 ```
-codex -p "$(cat skills/ios-store-assets/SKILL.md)"
+codex -p "$(cat plugins/ios/skills/ios-store-assets/SKILL.md)"
 ```
 
 注意：`ios-store-assets` 内部本身就调用 `codex` CLI 来生成图片——它的 **消费者** 是 Claude Code，**执行器** 才是 Codex；两者职责不冲突。
 
 ## Skill 目录
 
+### sharker-ios — iOS / Apple
+
 | Skill | 用途 |
 |---|---|
-| [`ios-store-assets`](./skills/ios-store-assets/SKILL.md) | 为 iOS 项目批量生成 App Store 上架资源（App Icon / 商店截图 / Preview Poster），通过 codex CLI 调用 gpt-image-2 出图。 |
-| [`skill-creator`](./skills/skill-creator/SKILL.md) | 在 SharkerSkills plugin 内交互式创建新 skill —— 8 轮问答 → 生成 SKILL.md → 自动 minor-bump 三站点版本与更新 README 目录。 |
-| [`picgo-upload`](./skills/picgo-upload/SKILL.md) | 把本地图片通过 PicGo 桌面端上传到图床并返回 URL；内置 bash 脚本随 plugin 分发，无需全局安装。 |
+| [`ios-store-assets`](./plugins/ios/skills/ios-store-assets/SKILL.md) | 为 iOS 项目批量生成 App Store 上架资源（App Icon / 商店截图 / Preview Poster），通过 codex CLI 调用 gpt-image-2 出图。 |
+<!-- skills:sharker-ios -->
+
+### sharker-tool — 独立工具
+
+| Skill | 用途 |
+|---|---|
+| [`picgo-upload`](./plugins/tool/skills/picgo-upload/SKILL.md) | 把本地图片通过 PicGo 桌面端上传到图床并返回 URL；内置 bash 脚本随 plugin 分发，无需全局安装。 |
+<!-- skills:sharker-tool -->
+
+### sharker-common — 通用 / meta
+
+| Skill | 用途 |
+|---|---|
+| [`skill-creator`](./plugins/common/skills/skill-creator/SKILL.md) | 在 SharkerSkills marketplace 内交互式创建新 skill —— 9 轮问答（含「归属哪个 plugin」）→ 生成 SKILL.md → 自动 minor-bump 目标 plugin 两站点版本与更新 README 目录。 |
+<!-- skills:sharker-common -->
 
 ## 添加新 skill
 
-1. `mkdir skills/<name>`
+推荐直接用 `skill-creator`（在 `sharker-common` 里）：说「帮我加一个 skill」，它会走 9 轮问答，**包括选归属哪个 plugin**，然后生成文件、bump 目标 plugin 版本、追加 README。
+
+手动添加流程：
+
+1. 选好归属 plugin（`common` / `ios` / `tool`），`mkdir -p plugins/<plugin>/skills/<name>`
 2. 在该目录创建 `SKILL.md`，文件头加 frontmatter：
    ```
    ---
@@ -49,15 +77,25 @@ codex -p "$(cat skills/ios-store-assets/SKILL.md)"
    ---
    ```
 3. 编写 skill 正文。
-4. `.claude-plugin/marketplace.json`、`.claude-plugin/plugin.json` 同步 bump `version`。
-5. 在 README "Skill 目录" 中追加一行。
+4. bump 该 plugin 的**两站点** `version`：`plugins/<plugin>/.claude-plugin/plugin.json` 与 `.claude-plugin/marketplace.json` 中对应 `plugins[]` 条目。
+5. 在 README 对应 plugin 小节的表格里（锚点注释 `<!-- skills:<plugin> -->` 之前）追加一行。
 6. 提交 PR。
 
-第三方 skill 加入时，请把原作者的 `LICENSE` 与 `ATTRIBUTION` 一并放入 `skills/<name>/`。
+> 新建一个**分类 plugin**（在 common/ios/tool 之外）需手动 scaffold：建 `plugins/<x>/.claude-plugin/plugin.json`（不带 `$schema`）与 `plugins/<x>/skills/`，并在 `marketplace.json` 的 `plugins[]` 增加一条 `source: "./plugins/<x>"`。
+
+第三方 skill 加入时，请把原作者的 `LICENSE` 与 `ATTRIBUTION` 一并放入 `plugins/<plugin>/skills/<name>/`。
 
 ## 版本
 
-当前 `0.3.0` —— 1.0.0 之前可能有破坏性调整。
+Marketplace 目录版本 `0.4.0`（本次多 plugin 拆分）。各分类 plugin 独立版本，当前均为 `0.1.0`：
+
+| Plugin | 版本 |
+|---|---|
+| `sharker-common` | 0.1.0 |
+| `sharker-ios` | 0.1.0 |
+| `sharker-tool` | 0.1.0 |
+
+1.0.0 之前可能有破坏性调整。
 
 ## License
 

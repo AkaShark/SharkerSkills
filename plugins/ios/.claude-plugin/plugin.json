@@ -1,7 +1,7 @@
 {
-  "name": "sharker-skills",
-  "version": "0.3.0",
-  "description": "A growing collection of focused, reusable Claude Code skills curated by Sharker. Seeded with ios-store-assets.",
+  "name": "sharker-ios",
+  "version": "0.1.0",
+  "description": "iOS / Apple platform skills curated by Sharker. Includes ios-store-assets for generating App Store submission assets.",
   "author": {
     "name": "Sharker",
     "email": "aaksharker@gmail.com"
@@ -10,10 +10,10 @@
   "homepage": "https://github.com/AkaShark/SharkerSkills",
   "license": "MIT",
   "keywords": [
-    "skills",
     "ios",
     "app-store",
     "assets",
+    "xcode",
     "claude-code"
   ],
   "skills": "./skills/"
