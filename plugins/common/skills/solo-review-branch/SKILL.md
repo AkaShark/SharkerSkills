@@ -73,8 +73,10 @@ grep -iE "$FEATURE_KW" /tmp/all_changed.txt | grep -E '\.(m|mm|h|swift|...)$' > 
 > /tmp/keep.txt; > /tmp/drop.txt; > /tmp/mixed.txt
 while read f; do
   # 只看「分支新增行」(blame 输出里非 ^boundary 的行)，统计作者
+  # 锚定 blame 作者括号 "(<email> date line)" 取 ( 后第一个 <>；
+  # 绝不能用贪婪 s/.*<...>/：代码行里的 #import <X/Y.h>、NSArray<T>、<协议> 会被误当作者
   authors=$(git blame -e "$BASE..HEAD" -- "$f" 2>/dev/null | grep -v '^\^' \
-            | sed -E 's/.*<([^>]+)>.*/\1/' | sort -u)
+            | sed -E 's/^[^(]*\(<([^>]+)>.*/\1/' | sort -u)
   mine=$(echo "$authors" | grep -cx "$MY")
   others=$(echo "$authors" | grep -vx "$MY" | grep -c .)
   if   [ "$mine" -gt 0 ] && [ "$others" -eq 0 ]; then echo "$f" >> /tmp/keep.txt
@@ -146,6 +148,8 @@ git switch "$WORK"
 ## 反模式
 
 - ❌ 用 `git log --author --name-only` 判作者 —— merge commit 污染，**必用 `git blame` 逐行**
+- ❌ blame 用贪婪正则 `s/.*<([^>]+)>.*/\1/` 取作者 —— 代码行里的 `#import <X/Y.h>`、`NSArray<T>`、`<协议>` 会被当成作者，造成大量假混写；**必须锚定作者括号** `s/^[^(]*\(<([^>]+)>.*/\1/`
+- ❌ 拿「快照 review 分支」blame 来验证作者归属 —— 快照是你一次性 commit 的，blame 全归 committer（你），会**假阳性**确认；验证作者必须 blame **工作分支** `BASE..HEAD`
 - ❌ `xargs -a <file>`（macOS 不支持）—— 用 `tr '\n' '\0' | xargs -0`
 - ❌ 在 review 分支上 build / 编译 —— 剔除了依赖文件，大概率编不过；它只用于看 diff
 - ❌ 只按作者、漏掉功能层 —— 会把你自己 merge 进来的其他功能也算成「你的」
