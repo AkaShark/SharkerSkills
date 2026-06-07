@@ -60,6 +60,7 @@ codex -p "$(cat plugins/ios/skills/ios-store-assets/SKILL.md)"
 | Skill | 用途 |
 |---|---|
 | [`skill-creator`](./plugins/common/skills/skill-creator/SKILL.md) | 在 SharkerSkills marketplace 内交互式创建新 skill —— 9 轮问答（含「归属哪个 plugin」）→ 生成 SKILL.md → 自动 minor-bump 目标 plugin 两站点版本与更新 README 目录。 |
+| [`solo-review-branch`](./plugins/common/skills/solo-review-branch/SKILL.md) | 从混杂的功能分支里抽出「只有我自己改动」的独立 review 分支（git blame 作者过滤 + 功能路径双层隔离，自动收敛多次提交的 churn），并支持把工作分支新改动增量同步过去。 |
 <!-- skills:sharker-common -->
 
 ## 添加新 skill

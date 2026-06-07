@@ -1,6 +1,6 @@
 {
   "name": "sharker-common",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Cross-cutting meta and utility skills curated by Sharker. Includes skill-creator, the interactive generator for new skills in this marketplace.",
   "author": {
     "name": "Sharker",
