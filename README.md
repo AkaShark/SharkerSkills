@@ -57,7 +57,7 @@ codex -p "$(cat skills/ios-store-assets/SKILL.md)"
 
 ## 版本
 
-当前 `0.1.0` —— 1.0.0 之前可能有破坏性调整。
+当前 `0.3.0` —— 1.0.0 之前可能有破坏性调整。
 
 ## License
 
