@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1777986761269,
+  "lastScanned": 1780823134337,
   "projectRoot": "/Users/sharker/Desktop/Project/Person/AI/Tool/SharkerSkills",
   "techStack": {
     "languages": [],
@@ -25,7 +25,10 @@
     "isMonorepo": false,
     "workspaces": [],
     "mainDirectories": [],
-    "gitBranches": null
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
   },
   "customNotes": [],
   "directoryMap": {
@@ -33,15 +36,27 @@
       "path": "skills",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1777986761172,
+      "lastAccessed": 1780823134216,
       "keyFiles": []
     }
   },
   "hotPaths": [
     {
       "path": "README.md",
-      "accessCount": 6,
-      "lastAccessed": 1777987957856,
+      "accessCount": 9,
+      "lastAccessed": 1780825939819,
+      "type": "file"
+    },
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "accessCount": 5,
+      "lastAccessed": 1780825657153,
+      "type": "file"
+    },
+    {
+      "path": "skills/skill-creator/SKILL.md",
+      "accessCount": 4,
+      "lastAccessed": 1780824023706,
       "type": "file"
     },
     {
@@ -51,21 +66,57 @@
       "type": "file"
     },
     {
-      "path": ".claude-plugin/marketplace.json",
-      "accessCount": 3,
-      "lastAccessed": 1777987674692,
-      "type": "file"
-    },
-    {
-      "path": "skills/skill-creator/SKILL.md",
-      "accessCount": 3,
-      "lastAccessed": 1777988001977,
-      "type": "file"
-    },
-    {
       "path": ".claude-plugin/plugin.json",
+      "accessCount": 3,
+      "lastAccessed": 1780824705799,
+      "type": "file"
+    },
+    {
+      "path": "claude-code-local/install.sh",
       "accessCount": 2,
-      "lastAccessed": 1777987675079,
+      "lastAccessed": 1780824231648,
+      "type": "file"
+    },
+    {
+      "path": "claude-code-local/README.md",
+      "accessCount": 2,
+      "lastAccessed": 1780824240720,
+      "type": "file"
+    },
+    {
+      "path": "plugins/tool/skills/picgo-upload/SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1780825662919,
+      "type": "file"
+    },
+    {
+      "path": "plugins/common/skills/skill-creator/SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1780825906839,
+      "type": "file"
+    },
+    {
+      "path": "claude-code-local/commands/hswiki.md",
+      "accessCount": 1,
+      "lastAccessed": 1780824206244,
+      "type": "file"
+    },
+    {
+      "path": "plugins/common/.claude-plugin/plugin.json",
+      "accessCount": 1,
+      "lastAccessed": 1780825631968,
+      "type": "file"
+    },
+    {
+      "path": "plugins/ios/.claude-plugin/plugin.json",
+      "accessCount": 1,
+      "lastAccessed": 1780825638671,
+      "type": "file"
+    },
+    {
+      "path": "plugins/tool/.claude-plugin/plugin.json",
+      "accessCount": 1,
+      "lastAccessed": 1780825646997,
       "type": "file"
     }
   ],

@@ -2,4 +2,4 @@
 *.log
 node_modules/
 .omc/state/
-.claude/settings.local.json
+.claude
