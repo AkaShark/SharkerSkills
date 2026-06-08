@@ -65,7 +65,7 @@
     {
       "name": "sharker-sdd",
       "description": "Spec-Driven Development 流水线 + 自生长工程知识库。sdd-init 一键铺出 .sdd/ 脚手架，按 spec→design→tasks→impl 开发，过程中的决策/踩坑/模式自动沉淀进 knowledge/，下次开工自动召回。",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": {
         "name": "Sharker",
         "email": "aaksharker@gmail.com"

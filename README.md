@@ -112,7 +112,7 @@ Marketplace 目录版本 `0.5.0`（本次新增 `sharker-sdd` plugin）。各分
 | `sharker-common` | 0.2.1 |
 | `sharker-ios` | 0.1.0 |
 | `sharker-tool` | 0.1.0 |
-| `sharker-sdd` | 0.1.0 |
+| `sharker-sdd` | 0.2.0 |
 
 1.0.0 之前可能有破坏性调整。
 

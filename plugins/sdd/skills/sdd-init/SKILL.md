@@ -78,11 +78,28 @@ grep -rl '{{DATE}}' "$PROJECT/.sdd" || echo "无残留占位 ✓"
 
 **Acceptance**：结构完整且无 `{{DATE}}` 残留。
 
-### Step 4 — 给用户回执 + 引导下一步
+### Step 4 — 注入知识库指针到项目 CLAUDE.md（让自主沉淀/召回真正触发；**非 hook**）
 
-报告铺出了什么，并提示：① 去 `constitution.md` 填项目稳定原则；② 第一个 feature 用 `/sharker-sdd:sdd-spec` 开工；③ 知识库会随开发自动生长，随时 `/sharker-sdd:kb-query` 召回、`/sharker-sdd:kb-lint` 巡检。**不替用户 git add/commit。**
+`.sdd/schema.md` 是给 AI 的行为协议，但它默认不在会话上下文里——AI 读不到就不会自主沉淀/召回。这一步往项目 `CLAUDE.md` **追加**一个**带标记、幂等、可整段删除**的指针块（只放协议摘要 + 指向 `schema.md`，**不灌全文**，保持「主 CLAUDE.md 不被 schema 正文污染」的原则）。这是**纯文本注入，不是 hook**：没有运行时拦截、没有后台进程、没有 `settings.json` 改动——看得见、删得掉。
 
-**Acceptance**：回执说明了 `.sdd/` 各部分用途 + 下一步命令；未执行任何 git 操作。
+```bash
+CLAUDE_MD="$PROJECT/CLAUDE.md"
+MARKER="sharker-sdd:knowledge-base"
+if grep -q "$MARKER" "$CLAUDE_MD" 2>/dev/null; then
+  echo "CLAUDE.md 已含知识库指针，跳过注入（幂等）"
+else
+  { [ -s "$CLAUDE_MD" ] && printf '\n'; cat "$SKILL_DIR/claude-md-pointer.tmpl.md"; } >> "$CLAUDE_MD"
+  echo "已注入知识库指针 → $CLAUDE_MD（原文件不存在则已新建，仅追加不改写）"
+fi
+```
+
+**Acceptance**：`$PROJECT/CLAUDE.md` 存在且含**且仅含一处** `sharker-sdd:knowledge-base` 标记块；已有 CLAUDE.md 的原内容只被**追加**、未被改写；二次 init 不重复注入。
+
+### Step 5 — 给用户回执 + 引导下一步
+
+报告铺出了什么，并提示：① 去 `constitution.md` 填项目稳定原则；② **已往 `CLAUDE.md` 加了一段带标记的知识库指针（不喜欢可整段删）**；③ 第一个 feature 用 `/sharker-sdd:sdd-spec` 开工；④ 知识库会随开发自动生长，随时 `/sharker-sdd:kb-query` 召回、`/sharker-sdd:kb-lint` 巡检。**不替用户 git add/commit。**
+
+**Acceptance**：回执说明了 `.sdd/` 各部分用途 + CLAUDE.md 注入 + 下一步命令；未执行任何 git 操作。
 
 ## 输入
 
@@ -107,7 +124,11 @@ grep -rl '{{DATE}}' "$PROJECT/.sdd" || echo "无残留占位 ✓"
     └── patterns/            代码模式/约定
 ```
 
-文件内 `{{DATE}}` 已替换为当天日期。**不产生业务代码、不动 git。**
+文件内 `{{DATE}}` 已替换为当天日期。
+
+并在项目 `CLAUDE.md` **追加**一个带标记的知识库指针块（`<!-- sharker-sdd:knowledge-base ... -->`，幂等、可整段删除）——让 AI 每个会话都能把行为协议读进上下文，自主沉淀/召回才会真正触发。**这是纯文本注入，不是 hook。**
+
+**不产生业务代码、不动 git。**
 
 ## 反模式
 
@@ -117,6 +138,9 @@ grep -rl '{{DATE}}' "$PROJECT/.sdd" || echo "无残留占位 ✓"
 - ❌ 手动逐个 `Write` 重建模板——模板是 `assets/` 里的权威拷贝，只 `cp` 不重写，避免漂移
 - ❌ init 完顺手 `git add` / `git commit`——本 skill 不碰 git，交还用户
 - ❌ 把日期写死在模板里——模板用 `{{DATE}}` 占位，init 时才注入当天日期
+- ❌ 把整个 `schema.md` 正文灌进 `CLAUDE.md`——只注入**摘要+指针**，全文留在 `.sdd/schema.md`，守住「不污染主 CLAUDE.md」原则
+- ❌ 用 hook（Stop/SessionEnd 拦截）做这件事——本 skill 走纯文本注入，无运行时侵入；不喜欢可删整块
+- ❌ 注入不加标记 / 不查重——必须用 `sharker-sdd:knowledge-base` 标记保证幂等，二次 init 不重复追加
 
 ## 示例
 
@@ -128,13 +152,15 @@ Claude（本 skill）：
   [Step 1] cwd=/Users/me/proj，非 marketplace，.sdd/ 不存在 ✓
   [Step 2] cp assets → .sdd/，替换 {{DATE}} → 2026-06-08
   [Step 3] 自检：结构完整、无占位残留 ✓
-  [Step 4] 回执：
+  [Step 4] CLAUDE.md 无标记 → 追加知识库指针块（带标记、可删）✓
+  [Step 5] 回执：
     ✅ 已铺出 .sdd/（constitution / schema / knowledge/ / specs/）
+    ✅ 已往 CLAUDE.md 追加知识库指针（标记块，不喜欢可整段删）
     下一步：
       1. 编辑 .sdd/constitution.md 填项目稳定原则
       2. 第一个 feature 用 /sharker-sdd:sdd-spec
       3. 开发中知识自动沉淀，可 /sharker-sdd:kb-query 召回
-    （未动 git，提交请自行 git add .sdd/）
+    （未动 git，提交请自行 git add .sdd/ CLAUDE.md）
 ```
 
 **示例 2（已存在，跳过）**
