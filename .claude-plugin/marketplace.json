@@ -6,7 +6,7 @@
     "name": "Sharker",
     "email": "aaksharker@gmail.com"
   },
-  "version": "0.4.0",
+  "version": "0.5.0",
   "plugins": [
     {
       "name": "sharker-common",
@@ -60,6 +60,25 @@
         "image",
         "upload",
         "picgo"
+      ]
+    },
+    {
+      "name": "sharker-sdd",
+      "description": "Spec-Driven Development 流水线 + 自生长工程知识库。sdd-init 一键铺出 .sdd/ 脚手架，按 spec→design→tasks→impl 开发，过程中的决策/踩坑/模式自动沉淀进 knowledge/，下次开工自动召回。",
+      "version": "0.1.0",
+      "author": {
+        "name": "Sharker",
+        "email": "aaksharker@gmail.com"
+      },
+      "source": "./plugins/sdd",
+      "category": "productivity",
+      "homepage": "https://github.com/AkaShark/SharkerSkills",
+      "tags": [
+        "sdd",
+        "spec-driven-development",
+        "workflow",
+        "knowledge-base",
+        "methodology"
       ]
     }
   ]
